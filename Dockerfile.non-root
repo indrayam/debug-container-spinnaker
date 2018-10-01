@@ -1,0 +1,36 @@
+#Download base image alpine
+FROM alpine:3.8
+
+# Update Software repository
+RUN apk update && apk upgrade && apk add --no-cache git openssh-client curl less openssl tree less bash bash-completion ca-certificates jq coreutils binutils findutils grep vim ncurses redis \
+    && addgroup -g 1000 anand \
+    && adduser -u 1000 -G anand -s /bin/bash -D anand
+
+# Set the WORKDIR to /home/anand
+USER anand:anand
+WORkDIR /home/anand
+
+# Download and Install k8s specific tools
+ADD --chown=anand:anand https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/linux/amd64/kubectl bin/kubectl
+ADD --chown=anand:anand https://storage.googleapis.com/kubernetes-helm/helm-v2.11.0-linux-amd64.tar.gz src/
+ADD --chown=anand:anand https://dl.minio.io/client/mc/release/linux-amd64/mc bin/mc
+ADD --chown=anand:anand https://github.com/wercker/stern/releases/download/1.8.0/stern_linux_amd64 bin/stern
+COPY --chown=anand:anand spinnaker/kubectx .kubectx
+COPY --chown=anand:anand spinnaker/kube-ps1 .kube-ps1
+COPY --chown=anand:anand spinnaker/fzf .fzf
+COPY --chown=anand:anand spinnaker/.bash_profile .
+COPY --chown=anand:anand spinnaker/.bashrc.non-root .bashrc
+COPY --chown=anand:anand spinnaker/.om .
+COPY --chown=anand:anand spinnaker/config .kube/
+COPY --chown=anand:anand spinnaker/spinnaker.txt src/
+COPY --chown=anand:anand spinnaker/complete-setup.sh .
+
+RUN set -x && \
+    chmod +x ~/bin/kubectl && \
+    chmod +x ~/bin/mc && \
+    chmod +x ~/bin/stern && \
+    chmod +x ~/complete-setup.sh
+
+
+
+
