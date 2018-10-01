@@ -1,4 +1,4 @@
-# Debug Container
+# Docker Image for a "Debug" Pod running Spinnaker on Kubernetes
 
 Inspiration: [Inspiration](https://ahmet.im/blog/debugging-scratch/)
 
